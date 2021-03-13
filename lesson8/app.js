@@ -64,6 +64,15 @@ function create(){
     	enemy1.body.gravity.y = 500;
     	enemy1.body.collideWorldBounds = true;
 
+    enemy2 = game.add.sprite(760, 20, 'baddie');
+    // Animate the enemy1
+    	enemy2.animations.add('left', [0,1], 10, true);
+    	enemy2.animations.add('right', [2,3], 10, true);
+    	game.physics.arcade.enable(enemy2);
+    	enemy2.body.bounce.y = 0.2;
+    	enemy2.body.gravity.y = 500;
+    	enemy2.body.collideWorldBounds = true;
+
     // Create the stars
 	stars = game.add.physicsGroup();
 	stars.enableBody = true;
@@ -76,13 +85,20 @@ function create(){
 
 	// Create keyboard entries
 	cursors = game.input.keyboard.createCursorKeys();
+	wKey = game.input.keyboard.addKey(phaser.keyboard.W);
+	aKey = game.input.keyboard.addKey(phaser.keyboard.W);
+	dKey = game.input.keyboard.addKey(phaser.keyboard.W);
 
+	if(cursors.left.isDown || aKey.isDown)
+		else if(cursors.right.isDown || dKey.isDown);
+	((cursors.up.isDown || wKey.isDown) && player.body.touching.down)
 }
 
 function update(){
 	game.physics.arcade.collide(player, platforms);
 	game.physics.arcade.collide(stars, platforms);
 	game.physics.arcade.collide(enemy1, platforms);
+	game.physics.arcade.collide(enemy2, platforms);
 
 	//reset the player's velocity if no events.
 	player.body.velocity.x = 0;
@@ -100,6 +116,7 @@ function update(){
 		player.animations.stop();
 		player.frame = 4;
 	}
+
 
 	//allow the player to jump if touching the ground
 	if(cursors.up.isDown && player.body.touching.down){
