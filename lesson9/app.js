@@ -44,11 +44,21 @@ function create(){
 
 	//Lesson 8:
 
+	// Create the stars
+	stars = game.add.physicsGroup();
+	stars.enableBody = true;
+	// We will create 12 stars evenly spaced
+	for(var i = 0; i < 12; i++){
+		var star = stars.create(i * 70, 0, 'star');
+		star.body.gravity.y = 200;
+		star.body.bounce.y = 0.7 + Math.random() * 0.2;
+	}
+
 	// Creating the player sprite
 	player = game.add.sprite(32, 400, 'dude');
 		// Animating the player sprite
-		player.animations.add('left',[0, 1, 2, 3],10,true);
-		player.animations.add('right',[5, 6, 7, 8],10,true);
+		player.animations.add('left', [0, 1, 2, 3], 10, true);
+		player.animations.add('right', [5, 6, 7, 8], 10, true);
 		game.physics.arcade.enable(player);
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 300;
@@ -63,16 +73,6 @@ function create(){
     	enemy1.body.bounce.y = 0.2;
     	enemy1.body.gravity.y = 500;
     	enemy1.body.collideWorldBounds = true;
-
-    // Create the stars
-	stars = game.add.physicsGroup();
-	stars.enableBody = true;
-	// We will create 12 stars evenly spaced
-	for(var i = 0; i < 12; i++){
-		var star = stars.create(i * 70, 0, 'star');
-		star.body.gravity.y = 200;
-		star.body.bounce.y = 0.7 + Math.random() * 0.2;
-	}
 
 	// Create keyboard entries
 	cursors = game.input.keyboard.createCursorKeys();
@@ -106,47 +106,55 @@ function update(){
 		player.body.velocity.y = -300;
 	}
 
-	game.physics.arcade.overlap(player, stars, collectStar);
-	game.physics.arcade.overlap(player, enemy1, loselife);
+	//Lesson 9:
+	game.physics.arcade.overlap(player, stars, collectStar); //, null, this);
+	game.physics.arcade.overlap(player, enemy1, loseLife);   //, null, this);
+
 	moveEnemy();
 
 	if(life < 0){
 		endGame();
 	}
-
-
-	
 }
-	function collectStar(player,star){
-		score =score +1;
-		scoretext.setText(score);
-		star.kill();
-		star.reset(Math.floor(Math.random()*750), 0)
+
+
+//define collectStar function
+function collectStar(player,star){
+	//update score variable
+	score =score +1;
+	//reflect in text
+	scoretext.setText(score);
+
+	//remove the star and reset to the top
+	star.kill();
+	star.reset(Math.floor(Math.random()*750),0)
+}
+
+//define loseLife
+function loseLife(player, enemy){
+	//lose life
+	life -= 1;
+	lifetext.setText(life);
+
+	enemy.kill();
+	enemy.reset(10, 20);
+}
+
+function moveEnemy(){
+	//Enemy AI
+	if(enemy1.x > 759){
+		enemy1.animations.play('left');
+		enemy1.body.velocity.x = -120;
+	}else if(enemy1.x < 405){
+		enemy1.animations.play('right');
+		enemy1.body.velocity.x = 120;
 	}
+}
 
-	function loselife(player, enemy){
-		life -= 1;
-		lifetext.setText(life);
-
-		enemy.kill();
-		enemy.reset(10, 20);
-	}
-
-	function moveEnemy(){
-		if(enemy1.x > 759){
-			enemy1.animations.play('left');
-			enemy1.body.velocity.x = -120;
-		} if else(enemy1.x < 405){
-			enemy1.animations.play('right');
-			enemy1.body.velocity.x = 120;
-		}
-	}
-
-
-	function endGame(){
-		player.kill();
-		scorelabel.text="GAME OVER! You Scored " + score;
-		scoretext.visable = false;
-		lifelabel.visable = false;
-		lifetext.visable = false;
-	}
+function endGame(){
+  player.kill();
+  scorelabel.text="GAME OVER! You scored " + score;
+  scoretext.visible = false;
+  lifelabel.visible = false;
+  lifetext.visible = false;
+}
